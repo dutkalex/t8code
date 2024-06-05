@@ -1098,7 +1098,8 @@ t8_forest_element_points_inside (t8_forest_t forest, t8_locidx_t ltreeid, const 
   const t8_locidx_t cltreeid = t8_forest_ltreeid_to_cmesh_ltreeid (forest, ltreeid);
   const t8_gloidx_t cgtreeid = t8_cmesh_get_global_id (cmesh, cltreeid);
   const t8_geometry_c *geometry = t8_cmesh_get_tree_geometry (cmesh, cgtreeid);
-  geometry->t8_geom_point_batch_inside_element (forest, ltreeid, element, points, num_points, is_inside, tolerance);
+  std::vector<int> vec_is_inside (is_inside, is_inside + num_points * sizeof (int));
+  geometry->t8_geom_point_batch_inside_element (forest, ltreeid, element, points, num_points, vec_is_inside, tolerance);
 }
 
 /* For each tree in a forest compute its first and last descendant */

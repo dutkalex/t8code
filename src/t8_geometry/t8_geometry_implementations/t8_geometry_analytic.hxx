@@ -115,7 +115,7 @@ struct t8_geometry_analytic: public t8_geometry
    */
   virtual void
   t8_geom_point_batch_inside_element (t8_forest_t forest, t8_locidx_t ltreeid, const t8_element_t *element,
-                                      const double *points, const int num_points, int *is_inside,
+                                      const double *points, const int num_points, std::vector<int> &is_inside,
                                       const double tolerance)
   {
     SC_ABORTF ("Function not yet implemented");

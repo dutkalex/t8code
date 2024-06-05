@@ -98,7 +98,7 @@ t8_four_points_coplanar (const double p_0[3], const double p_1[3], const double 
 void
 t8_geometry_linear::t8_geom_point_batch_inside_element (t8_forest_t forest, t8_locidx_t ltreeid,
                                                         const t8_element_t *element, const double *points,
-                                                        const int num_points, int *is_inside,
+                                                        const int num_points, std::vector<int> &is_inside,
                                                         const double tolerance) const
 {
   const t8_eclass_t tree_class = t8_forest_get_tree_class (forest, ltreeid);

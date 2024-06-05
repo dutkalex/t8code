@@ -71,7 +71,7 @@ t8_geometry_linear_axis_aligned::t8_geom_evaluate_jacobian (t8_cmesh_t cmesh, t8
 void
 t8_geometry_linear_axis_aligned::t8_geom_point_batch_inside_element (t8_forest_t forest, t8_locidx_t ltreeid,
                                                                      const t8_element_t *element, const double *points,
-                                                                     const int num_points, int *is_inside,
+                                                                     const int num_points, std::vector<int> &is_inside,
                                                                      const double tolerance) const
 {
   double v_min[3];
