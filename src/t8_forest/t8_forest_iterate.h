@@ -32,6 +32,7 @@
 
 #include <t8.h>
 #include <t8_forest/t8_forest_general.h>
+#include <vector>
 
 typedef int (*t8_forest_iterate_face_fn) (t8_forest_t forest, t8_locidx_t ltreeid, const t8_element_t *element,
                                           int face, void *user_data, t8_locidx_t tree_leaf_index);
@@ -56,8 +57,9 @@ typedef int (*t8_forest_iterate_face_fn) (t8_forest_t forest, t8_locidx_t ltreei
  */
 typedef int (*t8_forest_search_query_fn) (t8_forest_t forest, const t8_locidx_t ltreeid, const t8_element_t *element,
                                           const int is_leaf, const t8_element_array_t *leaf_elements,
-                                          const t8_locidx_t tree_leaf_index, void *query, sc_array_t *query_indices,
-                                          int *query_matches, const size_t num_active_queries);
+                                          const t8_locidx_t tree_leaf_index, void *query,
+                                          std::vector<size_t> &query_indices, std::vector<int> &query_matches,
+                                          const size_t num_active_queries);
 
 T8_EXTERN_C_BEGIN ();
 

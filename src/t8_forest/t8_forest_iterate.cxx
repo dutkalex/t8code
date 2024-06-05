@@ -24,6 +24,8 @@
 #include <t8_forest/t8_forest_types.h>
 #include <t8_forest/t8_forest_general.h>
 #include <t8_element_cxx.hxx>
+#include <vector>
+#include <numeric>
 
 /* We want to export the whole implementation to be callable from "C" */
 T8_EXTERN_C_BEGIN ();
@@ -173,7 +175,8 @@ static void
 t8_forest_search_recursion (t8_forest_t forest, const t8_locidx_t ltreeid, t8_element_t *element,
                             const t8_eclass_scheme_c *ts, t8_element_array_t *leaf_elements,
                             const t8_locidx_t tree_lindex_of_first_leaf, t8_forest_search_query_fn search_fn,
-                            t8_forest_search_query_fn query_fn, sc_array_t *queries, sc_array_t *active_queries)
+                            t8_forest_search_query_fn query_fn, sc_array_t *queries,
+                            std::vector<size_t> &active_queries)
 {
   /* Assertions to check for necessary requirements */
   /* The forest must be committed */
@@ -188,7 +191,7 @@ t8_forest_search_recursion (t8_forest_t forest, const t8_locidx_t ltreeid, t8_el
     /* There are no leaves left, so we have nothing to do */
     return;
   }
-  const size_t num_active = queries == NULL ? 0 : active_queries->elem_count;
+  const size_t num_active = queries == NULL ? 0 : active_queries.size ();
   if (queries != NULL && num_active == 0) {
     /* There are no queries left. We stop the recursion */
     return;
@@ -208,8 +211,11 @@ t8_forest_search_recursion (t8_forest_t forest, const t8_locidx_t ltreeid, t8_el
     }
   }
   /* Call the callback function for the element */
-  const int ret
-    = search_fn (forest, ltreeid, element, is_leaf, leaf_elements, tree_lindex_of_first_leaf, NULL, NULL, NULL, 0);
+  /* TODO: Cant leave the args blank, find a prettier solution */
+  std::vector<size_t> no_queries;
+  std::vector<int> no_match;
+  const int ret = search_fn (forest, ltreeid, element, is_leaf, leaf_elements, tree_lindex_of_first_leaf, NULL,
+                             no_queries, no_match, 0);
 
   if (!ret) {
     /* The function returned false. We abort the recursion */
@@ -219,24 +225,18 @@ t8_forest_search_recursion (t8_forest_t forest, const t8_locidx_t ltreeid, t8_el
   /* Check the queries.
    * If the current element is not a leaf, we store the queries that
    * return true in order to pass them on to the children of the element. */
-  sc_array_t *new_active_queries = NULL;
+  std::vector<size_t> new_active_queries;
   if (num_active > 0) {
-    if (!is_leaf) {
-      /* Initialize the new active query array */
-      new_active_queries = sc_array_new (sizeof (size_t));
-    }
-    int *active_queries_matches = T8_ALLOC (int, num_active);
+    std::vector<int> active_queries_matches (num_active);
     T8_ASSERT (query_fn != NULL);
     query_fn (forest, ltreeid, element, is_leaf, leaf_elements, tree_lindex_of_first_leaf, queries, active_queries,
               active_queries_matches, num_active);
 
     for (size_t iactive = 0; iactive < num_active; iactive++) {
       if (!is_leaf && active_queries_matches[iactive]) {
-        size_t query_index = *(size_t *) sc_array_index (active_queries, iactive);
-        *(size_t *) sc_array_push (new_active_queries) = query_index;
+        new_active_queries.push_back (active_queries[iactive]);
       }
     }
-    T8_FREE (active_queries_matches);
   }
 
   if (is_leaf) {
@@ -244,9 +244,8 @@ t8_forest_search_recursion (t8_forest_t forest, const t8_locidx_t ltreeid, t8_el
     return;
   }
 
-  if (num_active > 0 && new_active_queries->elem_count == 0) {
+  if (num_active > 0 && new_active_queries.empty ()) {
     /* No queries returned true for this element. We abort the recursion */
-    sc_array_destroy (new_active_queries);
     return;
   }
 
@@ -280,15 +279,12 @@ t8_forest_search_recursion (t8_forest_t forest, const t8_locidx_t ltreeid, t8_el
   ts->t8_element_destroy (num_children, children);
   T8_FREE (children);
   T8_FREE (split_offsets);
-  if (num_active > 0) {
-    sc_array_destroy (new_active_queries);
-  }
 }
 
 /* Perform a top-down search in one tree of the forest */
 static void
 t8_forest_search_tree (t8_forest_t forest, t8_locidx_t ltreeid, t8_forest_search_query_fn search_fn,
-                       t8_forest_search_query_fn query_fn, sc_array_t *queries, sc_array_t *active_queries)
+                       t8_forest_search_query_fn query_fn, sc_array_t *queries, std::vector<size_t> &active_queries)
 {
 
   /* Get the element class, scheme and leaf elements of this tree */
@@ -319,23 +315,17 @@ t8_forest_search (t8_forest_t forest, t8_forest_search_query_fn search_fn, t8_fo
 {
   /* If we have queries build a list of all active queries,
    * thus all queries in the array */
-  sc_array_t *active_queries = NULL;
+  std::vector<size_t> active_queries;
   if (queries != NULL) {
     const size_t num_queries = queries->elem_count;
+    active_queries.resize (num_queries);
     /* build an array and write 0, 1, 2, 3,... into it */
-    active_queries = sc_array_new_count (sizeof (size_t), num_queries);
-    for (size_t iquery = 0; iquery < num_queries; ++iquery) {
-      *(size_t *) sc_array_index (active_queries, iquery) = iquery;
-    }
+    std::iota (active_queries.begin (), active_queries.end (), 0);
   }
 
   const t8_locidx_t num_local_trees = t8_forest_get_num_local_trees (forest);
   for (t8_locidx_t itree = 0; itree < num_local_trees; itree++) {
     t8_forest_search_tree (forest, itree, search_fn, query_fn, queries, active_queries);
-  }
-
-  if (active_queries != NULL) {
-    sc_array_destroy (active_queries);
   }
 }
 

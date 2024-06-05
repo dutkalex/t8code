@@ -148,8 +148,8 @@ typedef struct
 static int
 t8_tutorial_search_callback (t8_forest_t forest, const t8_locidx_t ltreeid, const t8_element_t *element,
                              const int is_leaf, const t8_element_array_t *leaf_elements,
-                             const t8_locidx_t tree_leaf_index, void *query, sc_array_t *query_indices,
-                             int *query_matches, const size_t num_active_queries)
+                             const t8_locidx_t tree_leaf_index, void *query, std::vector<size_t> &query_indices,
+                             std::vector<int> &query_matches, const size_t num_active_queries)
 {
   T8_ASSERT (query == NULL);
 
@@ -174,14 +174,14 @@ t8_tutorial_search_callback (t8_forest_t forest, const t8_locidx_t ltreeid, cons
 static int
 t8_tutorial_search_query_callback (t8_forest_t forest, const t8_locidx_t ltreeid, const t8_element_t *element,
                                    const int is_leaf, const t8_element_array_t *leaf_elements,
-                                   const t8_locidx_t tree_leaf_index, void *query, sc_array_t *query_indices,
-                                   int *query_matches, const size_t num_active_queries)
+                                   const t8_locidx_t tree_leaf_index, void *query, std::vector<size_t> &query_indices,
+                                   std::vector<int> &query_matches, const size_t num_active_queries)
 {
   /* Build an array of all particle-coords, necessary for t8_forest_element_point_batch_inside */
   double *coords = T8_ALLOC (double, 3 * num_active_queries);
   for (size_t particle_iter = 0; particle_iter < num_active_queries; particle_iter++) {
     /* Get the query at the current query-index (particle_iter in this case). */
-    const size_t particle_id = *(size_t *) sc_array_index_int (query_indices, particle_iter);
+    const size_t particle_id = query_indices[particle_iter];
     /* Cast the query into a particle*/
     t8_tutorial_search_particle_t *particle
       = (t8_tutorial_search_particle_t *) sc_array_index ((sc_array_t *) query, particle_id);
@@ -217,7 +217,7 @@ t8_tutorial_search_query_callback (t8_forest_t forest, const t8_locidx_t ltreeid
        * the tree. */
         t8_locidx_t element_index = t8_forest_get_tree_element_offset (forest, ltreeid) + tree_leaf_index;
         /* Get the correct particle_id */
-        size_t particle_id = *(size_t *) sc_array_index_int (query_indices, matches_id);
+        size_t particle_id = query_indices[matches_id];
         t8_tutorial_search_particle_t *particle
           = (t8_tutorial_search_particle_t *) sc_array_index ((sc_array_t *) query, particle_id);
         particle->is_inside_partition = 1;

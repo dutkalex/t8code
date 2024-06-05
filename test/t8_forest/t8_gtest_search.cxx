@@ -29,6 +29,7 @@
 #include <t8_forest/t8_forest_iterate.h>
 #include <t8_schemes/t8_default/t8_default_cxx.hxx>
 #include <test/t8_gtest_macros.hxx>
+#include <vector>
 
 class forest_search: public testing::TestWithParam<std::tuple<t8_eclass, int>> {
  protected:
@@ -63,7 +64,8 @@ class forest_search: public testing::TestWithParam<std::tuple<t8_eclass, int>> {
 static int
 t8_test_search_all_fn (t8_forest_t forest, const t8_locidx_t ltreeid, const t8_element_t *element, const int is_leaf,
                        const t8_element_array_t *leaf_elements, const t8_locidx_t tree_leaf_index, void *queries,
-                       sc_array_t *query_indices, int *query_matches, const size_t num_active_queries)
+                       std::vector<size_t> &query_indices, std::vector<int> &query_matches,
+                       const size_t num_active_queries)
 {
   EXPECT_TRUE (queries == NULL) << "Search callback must not be called with query argument.";
 
@@ -91,7 +93,8 @@ t8_test_search_all_fn (t8_forest_t forest, const t8_locidx_t ltreeid, const t8_e
 static int
 t8_test_search_query_all_fn (t8_forest_t forest, t8_locidx_t ltreeid, const t8_element_t *element, const int is_leaf,
                              const t8_element_array_t *leaf_elements, const t8_locidx_t tree_leaf_index, void *queries,
-                             sc_array_t *query_indices, int *query_matches, const size_t num_active_queries)
+                             std::vector<size_t> &query_indices, std::vector<int> &query_matches,
+                             const size_t num_active_queries)
 {
   EXPECT_TRUE (queries != NULL) << "query callback must be called with queries argument. ";
   EXPECT_EQ (num_active_queries, (long unsigned int) 1) << "Wrong number of active queries passed to query callback.";
