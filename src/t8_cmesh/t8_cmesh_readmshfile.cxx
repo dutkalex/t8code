@@ -28,6 +28,7 @@
 #include <t8_geometry/t8_geometry_implementations/t8_geometry_cad.h>
 #include "t8_cmesh_types.h"
 #include "t8_cmesh_stash.h"
+#include "t8_cmesh/t8_cmesh_helpers.h"
 
 #ifdef _WIN32
 #include "t8_windows.h"
@@ -1888,7 +1889,8 @@ t8_cmesh_from_msh_file (const char *fileprefix, const int partition, sc_MPI_Comm
     }
     /* close the file and free the memory for the nodes */
     fclose (file);
-    t8_cmesh_msh_file_find_neighbors (cmesh, vertex_indices);
+    t8_cmesh_set_join_by_stash (cmesh, nullptr, 0);
+    //t8_cmesh_msh_file_find_neighbors (cmesh, vertex_indices);
     if (vertices != NULL) {
       sc_hash_destroy (vertices);
     }
