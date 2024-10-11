@@ -22,11 +22,10 @@
 
 #include <gtest/gtest.h>
 #include <t8_eclass.h>
-#include <t8_schemes/t8_default/t8_default_cxx.hxx>
+#include <t8_schemes/t8_default/t8_default.hxx>
 #include <t8_forest/t8_forest_general.h>
 #include <t8_forest/t8_forest_geometrical.h>
 #include <t8_forest/t8_forest_ghost.h>
-#include <t8_forest/t8_forest_private.h>
 #include <t8_cmesh.h>
 #include <t8_cmesh/t8_cmesh_examples.h>
 
@@ -54,7 +53,7 @@ test_adapt_holes (t8_forest_t forest, t8_forest_t forest_from, t8_locidx_t which
   return 0;
 }
 
-class forest_ghost_exchange_holes: public testing::Test {
+class DISABLED_forest_ghost_exchange_holes: public testing::Test {
  protected:
   void
   SetUp () override
@@ -103,12 +102,10 @@ class forest_ghost_exchange_holes: public testing::Test {
   t8_cmesh_t cmesh;
 };
 
-TEST_F (forest_ghost_exchange_holes, errorTest)
+TEST_F (DISABLED_forest_ghost_exchange_holes, errorTest)
 {
   /* This test tests the functionality described in Issue: https://github.com/DLR-AMR/t8code/issues/825
-  * Remove the GTEST_SKIP() macros when you start working on the issue.
   */
-  GTEST_SKIP ();
   if (comm != sc_MPI_COMM_NULL) {
     const int level = 1;
     const int execute_ghost = 1;

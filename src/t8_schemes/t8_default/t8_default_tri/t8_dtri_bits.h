@@ -80,7 +80,7 @@ t8_dtri_ancestor (const t8_dtri_t *t, int level, t8_dtri_t *ancestor);
  * \param [out] coordinates An array of 2 t8_dtri_coord_t that will be filled with the coordinates of the vertex.
  */
 void
-t8_dtri_compute_coords (const t8_dtri_t *elem, const int vertex, t8_dtri_coord_t coordinates[2]);
+t8_dtri_compute_integer_coords (const t8_dtri_t *elem, const int vertex, t8_dtri_coord_t coordinates[2]);
 
 /** Compute the reference coordinates of a vertex of a triangle when the 
  * tree (level 0 triangle) is embedded in \f$ [0,1]^2 \f$.
@@ -403,6 +403,17 @@ t8_dtri_is_valid (const t8_dtri_t *t);
 void
 t8_dtri_init (t8_dtri_t *t);
 #endif
+
+void
+t8_dtri_element_pack (t8_dtri_t **const elements, const unsigned int count, void *send_buffer, const int buffer_size,
+                      int *position, sc_MPI_Comm comm);
+
+void
+t8_dtri_element_pack_size (const unsigned int count, sc_MPI_Comm comm, int *pack_size);
+
+void
+t8_dtri_element_unpack (void *recvbuf, const int buffer_size, int *position, t8_dtri_t **elements,
+                        const unsigned int count, sc_MPI_Comm comm);
 
 T8_EXTERN_C_END ();
 

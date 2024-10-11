@@ -41,7 +41,7 @@ T8_EXTERN_C_BEGIN ();
  * \param [out] coordinates An array of 3 t8_dtet_coord_t that will be filled with the coordinates of the vertex.
  */
 void
-t8_dtet_compute_coords (const t8_dtet_t *elem, int vertex, t8_dtet_coord_t coordinates[3]);
+t8_dtet_compute_integer_coords (const t8_dtet_t *elem, int vertex, t8_dtet_coord_t coordinates[3]);
 
 /** Compute the coordinates of a vertex of a tetrahedron when the 
  * tree (level 0 tetrahedron) is embedded in \f$ [0,1]^3 \f$.
@@ -377,6 +377,17 @@ t8_dtet_is_valid (const t8_dtet_t *t);
  */
 void
 t8_dtet_init (t8_dtet_t *t);
+
+void
+t8_dtet_element_pack (t8_dtet_t **const elements, const unsigned int count, void *send_buffer, const int buffer_size,
+                      int *position, sc_MPI_Comm comm);
+
+void
+t8_dtet_element_pack_size (const unsigned int count, sc_MPI_Comm comm, int *pack_size);
+
+void
+t8_dtet_element_unpack (void *recvbuf, const int buffer_size, int *position, t8_dtet_t **elements,
+                        const unsigned int count, sc_MPI_Comm comm);
 
 T8_EXTERN_C_END ();
 

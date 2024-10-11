@@ -1,23 +1,23 @@
 /*
-This file is part of t8code.
-t8code is a C library to manage a collection (a forest) of multiple
-connected adaptive space-trees of general element classes in parallel.
+  This file is part of t8code.
+  t8code is a C library to manage a collection (a forest) of multiple
+  connected adaptive space-trees of general element classes in parallel.
 
-Copyright (C) 2015 the developers
+  Copyright (C) 2015 the developers
 
-t8code is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+  t8code is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
 
-t8code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+  t8code is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with t8code; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public License
+  along with t8code; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
 /** \file t8_gtest_nca.cxx
@@ -28,7 +28,7 @@ along with t8code; if not, write to the Free Software Foundation, Inc.,
 #include <gtest/gtest.h>
 #include <test/t8_gtest_custom_assertion.hxx>
 #include <t8_eclass.h>
-#include <t8_schemes/t8_default/t8_default_cxx.hxx>
+#include <t8_schemes/t8_default/t8_default.hxx>
 #include <test/t8_gtest_macros.hxx>
 
 class nca: public testing::TestWithParam<t8_eclass> {
@@ -263,7 +263,7 @@ TEST_P (nca, recursive_check_higher_level)
   t8_element_t *correct_nca_high_level;
   int num_children;
   int i, k, l;
-  t8_gloidx_t leafs_on_level;
+  t8_gloidx_t leaves_on_level;
   EXPECT_TRUE (max_lvl - recursion_depth >= 0);
 
   ts->t8_element_new (1, &parent_a);
@@ -272,9 +272,9 @@ TEST_P (nca, recursive_check_higher_level)
 
   /* Test on different levels around the middle of the refinement tree */
   for (i = recursion_depth; i < max_lvl; i++) {
-    leafs_on_level = ts->t8_element_count_leafs (correct_nca, i - recursion_depth);
-    /* middle = leafs/2 */
-    ts->t8_element_set_linear_id (correct_nca_high_level, i - recursion_depth, leafs_on_level / 2);
+    leaves_on_level = ts->t8_element_count_leaves (correct_nca, i - recursion_depth);
+    /* middle = leaves/2 */
+    ts->t8_element_set_linear_id (correct_nca_high_level, i - recursion_depth, leaves_on_level / 2);
 
     /* Initialization for recursive_nca_check */
     num_children = ts->t8_element_num_children (correct_nca_high_level);
@@ -309,4 +309,4 @@ TEST_P (nca, recursive_check_higher_level)
   ts->t8_element_destroy (1, &correct_nca_high_level);
 }
 
-INSTANTIATE_TEST_SUITE_P (t8_gtest_nca, nca, AllEclasses);
+INSTANTIATE_TEST_SUITE_P (t8_gtest_nca, nca, AllEclasses, print_eclass);

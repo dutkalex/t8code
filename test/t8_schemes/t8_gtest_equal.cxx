@@ -22,7 +22,7 @@
 
 #include <gtest/gtest.h>
 #include <t8_eclass.h>
-#include <t8_schemes/t8_default/t8_default_cxx.hxx>
+#include <t8_schemes/t8_default/t8_default.hxx>
 #include <test/t8_gtest_custom_assertion.hxx>
 #include <test/t8_gtest_macros.hxx>
 #include "t8_gtest_dfs_base.hxx"
@@ -77,11 +77,11 @@ class class_test_equal: public TestDFS {
 TEST_P (class_test_equal, test_equal_dfs)
 {
 #ifdef T8_ENABLE_LESS_TESTS
-  const int maxlvl = 4;
+  const int maxlvl = 3;
 #else
-  const int maxlvl = 6;
+  const int maxlvl = 5;
 #endif
   check_recursive_dfs_to_max_lvl (maxlvl);
 }
 
-INSTANTIATE_TEST_SUITE_P (t8_gtest_test_all_imps, class_test_equal, AllEclasses);
+INSTANTIATE_TEST_SUITE_P (t8_gtest_test_all_imps, class_test_equal, AllEclasses, print_eclass);

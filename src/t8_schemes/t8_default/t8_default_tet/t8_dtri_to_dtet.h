@@ -72,7 +72,7 @@ T8_EXTERN_C_BEGIN ();
 #define t8_dtri_parent t8_dtet_parent
 #define t8_dtri_ancestor t8_dtet_ancestor
 #define t8_dtri_compute_all_coords t8_dtet_compute_all_coords
-#define t8_dtri_compute_coords t8_dtet_compute_coords
+#define t8_dtri_compute_integer_coords t8_dtet_compute_integer_coords
 #define t8_dtri_compute_vertex_ref_coords t8_dtet_compute_vertex_ref_coords
 #define t8_dtri_compute_reference_coords t8_dtet_compute_reference_coords
 #define t8_dtri_child t8_dtet_child
@@ -108,6 +108,9 @@ T8_EXTERN_C_BEGIN ();
 #define t8_dtri_init_linear_id_with_level t8_dtet_init_linear_id_with_level
 #define t8_dtri_linear_id_with_level t8_dtet_linear_id_with_level
 #define t8_dtri_debug_print t8_dtet_debug_print
+#define t8_dtri_element_pack t8_dtet_element_pack
+#define t8_dtri_element_pack_size t8_dtet_element_pack_size
+#define t8_dtri_element_unpack t8_dtet_element_unpack
 
 T8_EXTERN_C_END ();
 

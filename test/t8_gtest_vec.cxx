@@ -1,10 +1,9 @@
 /*
   This file is part of t8code.
   t8code is a C library to manage a collection (a forest) of multiple
-  connected adaptive space-trees of general element types in parallel.
+  connected adaptive space-trees of general element classes in parallel.
 
-  Copyright (C) 2010 The University of Texas System
-  Written by Carsten Burstedde, Lucas C. Wilcox, and Tobin Isaac
+  Copyright (C) 2024 the developers
 
   t8code is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -249,4 +248,12 @@ TEST (t8_gtest_vec, cross)
   /* e2 x e3 = e1 */
   t8_vec_cross (e2, e3, cross);
   EXPECT_VEC3_EQ (cross, e1, T8_PRECISION_EPS);
+}
+
+TEST (t8_gtest_vec, check_less_or_equal)
+{
+  const t8_test_vec one = { 1.0, 1.0, 1.0 };
+  const t8_test_vec one_minus_eps = { 1.0 - T8_PRECISION_EPS, 1.0 - T8_PRECISION_EPS, 1.0 - T8_PRECISION_EPS };
+
+  EXPECT_VEC3_EQ (one, one_minus_eps, T8_PRECISION_EPS);
 }
